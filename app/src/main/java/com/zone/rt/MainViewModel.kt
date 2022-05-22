@@ -70,13 +70,13 @@ class MainViewModel : ViewModel() {
     fun hitSphere(center: Point3, radius: Double, ray: Ray): Double {
         val oc = ray.origin - center
         val a = ray.direction dot ray.direction
-        val b = oc dot ray.direction * 2.0
+        val halfB = oc dot ray.direction
         val c = (oc dot oc) - radius * radius
-        val delta = b * b - 4 * a * c
+        val delta = halfB * halfB - a * c
         return if (delta < 0) {
             -1.0
         } else {
-            (-b - sqrt(delta)) / (2.0 * a)
+            (-halfB - sqrt(delta)) / a
         }
     }
 
