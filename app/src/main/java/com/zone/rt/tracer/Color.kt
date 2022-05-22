@@ -4,6 +4,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
 fun MakeColor(v: Vec3): Int {
-    val color = Color(red = v.x.toInt(), green = v.y.toInt(), blue = v.z.toInt())
+    val color = Color(v.x.toFloat(), v.y.toFloat(), v.z.toFloat())
     return color.toArgb()
 }
