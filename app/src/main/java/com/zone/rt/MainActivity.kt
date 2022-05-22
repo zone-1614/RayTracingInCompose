@@ -42,11 +42,6 @@ fun RayTracingCompose(vm: MainViewModel = viewModel()) = RayTracingInComposeThem
             modifier = Modifier.size(vm.imageWidth.dp, vm.imageHeight.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
-        LinearProgressIndicator(
-            modifier = Modifier.height(20.dp),
-            progress = vm.renderProgress()
-        )
-        Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
             vm.draw()
         }) {
@@ -55,6 +50,8 @@ fun RayTracingCompose(vm: MainViewModel = viewModel()) = RayTracingInComposeThem
         Spacer(modifier = Modifier.height(10.dp))
         if (vm.finishRender()) {
             Text(text = "Finish Render !", color = Color.Black)
+        } else {
+            Text(text = "Remain: ${vm.progress} lines", color = Color.Black)
         }
     }
 }
