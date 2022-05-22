@@ -39,7 +39,7 @@ class MainViewModel : ViewModel() {
             Thread.sleep(10)
             for (x in 0 until imageWidth) {
                 val u = x.toDouble() / (imageWidth - 1)
-                val v = y.toDouble() / (imageHeight - 1)
+                val v = 1.0 - y.toDouble() / (imageHeight - 1)
                 val ray = Ray(origin, lowerLeftCorner + horizontal * u + vertical * v - origin)
                 val color = rayColor(ray)
                 bitmap[x, y] = MakeColor(color)
