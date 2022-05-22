@@ -27,7 +27,7 @@ class MainViewModel : ViewModel() {
             progress = imageHeight - y - 1
             Thread.sleep(10)
             for (x in 0 until imageWidth) {
-                bitmap[x, y] = MakeColor(Color3(x.toDouble() / (imageWidth - 1) * 256, y.toDouble() / (imageHeight - 1) * 256, 0.25 * 256))
+                bitmap[x, y] = MakeColor(Color3(x.toDouble() / (imageWidth - 1) * 255.99, y.toDouble() / (imageHeight - 1) * 255.99, 0.25 * 255.99))
             }
         }
     }
