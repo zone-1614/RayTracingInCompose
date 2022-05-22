@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zone.rt.ui.theme.RayTracingInComposeTheme
@@ -37,9 +37,9 @@ fun RayTracingCompose(vm: MainViewModel = viewModel()) = RayTracingInComposeThem
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = "render",
-            modifier = Modifier.size(400.dp, 256.dp)
+            bitmap = vm.bitmap.asImageBitmap(),
+            contentDescription = "image",
+            modifier = Modifier.size(vm.imageWidth.dp, vm.imageHeight.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
         LinearProgressIndicator(
@@ -48,7 +48,7 @@ fun RayTracingCompose(vm: MainViewModel = viewModel()) = RayTracingInComposeThem
         )
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
-            vm.addProgress()
+            vm.draw()
         }) {
             Text(text = "Begin Render", color = Color.Black)
         }
