@@ -56,9 +56,20 @@ class MainViewModel : ViewModel() {
     }
 
     fun rayColor(ray: Ray): Color3 {
+        if (hitSphere(Point3(0.0, 0.0, -1.0), 0.5, ray))
+            return Color3(1.0, 1.0, 0.0)
         val normalDirection = ray.direction.normalize()
         val t = 0.5 * (normalDirection.y + 1.0)
         return Color3(1.0, 1.0, 1.0) * (1.0 - t) + Color3(0.5, 0.7, 1.0) * t
+    }
+
+    fun hitSphere(center: Point3, radius: Double, ray: Ray): Boolean {
+        val oc = ray.origin - center
+        val a = ray.direction dot ray.direction
+        val b = oc dot ray.direction * 2.0
+        val c = (oc dot oc) - radius * radius
+        val delta = b * b - 4 * a * c
+        return delta > 0
     }
 
 }
