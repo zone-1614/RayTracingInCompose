@@ -39,4 +39,8 @@ class MainViewModel : ViewModel() {
         return x * 256 / imageWidth
     }
 
+    fun refresh() {
+        bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
+    }
+
 }

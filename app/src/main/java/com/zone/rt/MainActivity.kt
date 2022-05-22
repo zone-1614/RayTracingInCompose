@@ -43,9 +43,16 @@ fun RayTracingCompose(vm: MainViewModel = viewModel()) = RayTracingInComposeThem
         )
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
+            if (vm.finishRender()) {
+                vm.refresh()
+            }
             vm.draw()
         }) {
-            Text(text = "Begin Render", color = Color.Black)
+            if (vm.finishRender()) {
+                Text(text = "Restart", color = Color.Black)
+            } else {
+                Text(text = "Begin Render", color = Color.Black)
+            }
         }
         Spacer(modifier = Modifier.height(10.dp))
         if (vm.finishRender()) {
