@@ -8,6 +8,7 @@ import androidx.core.graphics.set
 import androidx.lifecycle.ViewModel
 import com.zone.rt.tracer.*
 import kotlin.concurrent.thread
+import kotlin.math.sqrt
 
 class MainViewModel : ViewModel() {
     // Image
@@ -56,20 +57,27 @@ class MainViewModel : ViewModel() {
     }
 
     fun rayColor(ray: Ray): Color3 {
-        if (hitSphere(Point3(0.0, 0.0, -1.0), 0.5, ray))
-            return Color3(1.0, 1.0, 0.0)
-        val normalDirection = ray.direction.normalize()
-        val t = 0.5 * (normalDirection.y + 1.0)
+        var t = hitSphere(Point3(0.0, 0.0, -1.0), 0.5, ray)
+        if (t > 0.0) {
+            val n = (ray.at(t) - Vec3(0.0, 0.0, -1.0)).normalize()
+            return Color3(n.x + 1, n.y + 1, n.z + 1) * 0.5
+        }
+        val normal = ray.direction.normalize()
+        t = 0.5 * (normal.y + 1.0)
         return Color3(1.0, 1.0, 1.0) * (1.0 - t) + Color3(0.5, 0.7, 1.0) * t
     }
 
-    fun hitSphere(center: Point3, radius: Double, ray: Ray): Boolean {
+    fun hitSphere(center: Point3, radius: Double, ray: Ray): Double {
         val oc = ray.origin - center
         val a = ray.direction dot ray.direction
         val b = oc dot ray.direction * 2.0
         val c = (oc dot oc) - radius * radius
         val delta = b * b - 4 * a * c
-        return delta > 0
+        return if (delta < 0) {
+            -1.0
+        } else {
+            (-b - sqrt(delta)) / (2.0 * a)
+        }
     }
 
 }

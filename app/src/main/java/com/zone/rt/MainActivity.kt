@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +36,7 @@ fun RayTracingCompose(vm: MainViewModel = viewModel()) = RayTracingInComposeThem
             .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        var enable by remember { mutableStateOf(true) }
         Image(
             bitmap = vm.bitmap.asImageBitmap(),
             contentDescription = "image",
@@ -43,11 +44,15 @@ fun RayTracingCompose(vm: MainViewModel = viewModel()) = RayTracingInComposeThem
         )
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
+            enable = false
             if (vm.finishRender()) {
                 vm.refresh()
             }
             vm.draw()
-        }) {
+            enable = true
+        },
+            enabled = enable
+        ) {
             if (vm.finishRender()) {
                 Text(text = "Restart", color = Color.Black)
             } else {
