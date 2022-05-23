@@ -13,23 +13,19 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.concurrent.thread
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 class MainViewModel : ViewModel() {
     // Image
-    var aspectRatio = 16.0f / 9.0f
-    var imageHeight = 256
-    var imageWidth = (aspectRatio * imageHeight).toInt()
+    val aspectRatio = 16.0f / 9.0f
+    val imageHeight = 256
+    val imageWidth = (aspectRatio * imageHeight).toInt()
+    val samples = 100
 
     // Camera
-    var viewportHeight = 2.0
-    var viewportWidth = aspectRatio * viewportHeight
-    var focalLength = 1.0
+    val camera = Camera()
 
-    var origin = Point3()
-    var horizontal = Vec3(viewportWidth, 0.0, 0.0)
-    var vertical = Vec3(0.0, viewportHeight, 0.0)
-    var lowerLeftCorner = origin - horizontal / 2.0 - vertical / 2.0 - Vec3(0.0, 0.0, focalLength)
-
+    // world
     var world = HittableList().apply {
         add(Sphere(Point3(0.0, 0.0, -1.0), 0.5))
         add(Sphere(Point3(0.0, -100.5, -1.0), 100.0))
@@ -44,13 +40,15 @@ class MainViewModel : ViewModel() {
     fun draw() = thread {
         for (y in 0 until imageHeight) {
             progress = imageHeight - y - 1
-            Thread.sleep(1)
             for (x in 0 until imageWidth) {
-                val u = x.toDouble() / (imageWidth - 1)
-                val v = 1.0 - y.toDouble() / (imageHeight - 1)
-                val ray = Ray(origin, lowerLeftCorner + horizontal * u + vertical * v - origin)
-                val color = rayColor(ray, world)
-                bitmap[x, y] = MakeColor(color)
+                val color = Color3()
+                repeat(samples) {
+                    val u = (x.toDouble() + Random.nextDouble(1.0)) / (imageWidth - 1)
+                    val v = 1 - ((y.toDouble() + Random.nextDouble(1.0)) / (imageHeight - 1))
+                    val ray = camera.getRay(v, u)
+                    color.plusAssign(rayColor(ray, world))
+                }
+                bitmap[x, y] = MakeColor(color, samples)
             }
         }
     }
@@ -67,18 +65,5 @@ class MainViewModel : ViewModel() {
         val dir = ray.direction.normalize()
         val t = 0.5 * (dir.y + 1)
         return Color3(1.0, 1.0, 1.0) * (1.0 - t) + Color3(0.5, 0.7, 1.0) * t
-    }
-
-    fun hitSphere(center: Point3, radius: Double, ray: Ray): Double {
-        val oc = ray.origin - center
-        val a = ray.direction dot ray.direction
-        val halfB = oc dot ray.direction
-        val c = (oc dot oc) - radius * radius
-        val delta = halfB * halfB - a * c
-        return if (delta < 0) {
-            -1.0
-        } else {
-            (-halfB - sqrt(delta)) / a
-        }
     }
 }
