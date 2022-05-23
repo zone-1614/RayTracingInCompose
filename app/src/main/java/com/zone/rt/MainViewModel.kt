@@ -1,12 +1,16 @@
 package com.zone.rt
 
 import android.graphics.Bitmap
+import android.os.Environment
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.graphics.set
 import androidx.lifecycle.ViewModel
 import com.zone.rt.tracer.*
+import java.io.File
+import java.io.FileOutputStream
 import kotlin.concurrent.thread
 import kotlin.math.sqrt
 
@@ -40,7 +44,7 @@ class MainViewModel : ViewModel() {
     fun draw() = thread {
         for (y in 0 until imageHeight) {
             progress = imageHeight - y - 1
-            Thread.sleep(10)
+            Thread.sleep(1)
             for (x in 0 until imageWidth) {
                 val u = x.toDouble() / (imageWidth - 1)
                 val v = 1.0 - y.toDouble() / (imageHeight - 1)
@@ -49,10 +53,6 @@ class MainViewModel : ViewModel() {
                 bitmap[x, y] = MakeColor(color)
             }
         }
-    }
-
-    fun scale(x: Int): Int {
-        return x * 256 / imageWidth
     }
 
     fun refresh() {
@@ -81,5 +81,4 @@ class MainViewModel : ViewModel() {
             (-halfB - sqrt(delta)) / a
         }
     }
-
 }
