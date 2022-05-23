@@ -26,9 +26,12 @@ class MainViewModel : ViewModel() {
     var vertical = Vec3(0.0, viewportHeight, 0.0)
     var lowerLeftCorner = origin - horizontal / 2.0 - vertical / 2.0 - Vec3(0.0, 0.0, focalLength)
 
-    var progress by mutableStateOf(imageHeight)
+    var world = HittableList().apply {
+        add(Sphere(Point3(0.0, 0.0, -1.0), 0.5))
+        add(Sphere(Point3(0.0, -100.5, -1.0), 100.0))
+    }
 
-    fun renderProgress() = progress
+    var progress by mutableStateOf(imageHeight)
 
     fun finishRender(): Boolean = progress == 0
 
@@ -42,7 +45,7 @@ class MainViewModel : ViewModel() {
                 val u = x.toDouble() / (imageWidth - 1)
                 val v = 1.0 - y.toDouble() / (imageHeight - 1)
                 val ray = Ray(origin, lowerLeftCorner + horizontal * u + vertical * v - origin)
-                val color = rayColor(ray)
+                val color = rayColor(ray, world)
                 bitmap[x, y] = MakeColor(color)
             }
         }
@@ -56,14 +59,13 @@ class MainViewModel : ViewModel() {
         bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
     }
 
-    fun rayColor(ray: Ray): Color3 {
-        var t = hitSphere(Point3(0.0, 0.0, -1.0), 0.5, ray)
-        if (t > 0.0) {
-            val n = (ray.at(t) - Vec3(0.0, 0.0, -1.0)).normalize()
-            return Color3(n.x + 1, n.y + 1, n.z + 1) * 0.5
+    fun rayColor(ray: Ray, world: HittableList): Color3 {
+        val pair = world.hit(ray, 0.0, infinity)
+        if (pair.first) {
+            return (pair.second.normal + Color3(1.0, 1.0, 1.0)) * 0.5
         }
-        val normal = ray.direction.normalize()
-        t = 0.5 * (normal.y + 1.0)
+        val dir = ray.direction.normalize()
+        val t = 0.5 * (dir.y + 1)
         return Color3(1.0, 1.0, 1.0) * (1.0 - t) + Color3(0.5, 0.7, 1.0) * t
     }
 
