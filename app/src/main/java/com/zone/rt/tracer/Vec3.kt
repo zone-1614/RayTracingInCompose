@@ -1,5 +1,6 @@
 package com.zone.rt.tracer
 
+import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -9,6 +10,11 @@ class Vec3(var x: Double, var y: Double, var z: Double) {
     fun length(): Double = sqrt(lengthSquared())
 
     fun lengthSquared(): Double = x * x + y * y + z * z
+
+    fun nearZero(): Boolean {
+        val s = 1e-8
+        return (abs(x) < s) && (abs(y) < s) && (abs(z) < s)
+    }
 
     companion object {
         fun random(): Vec3 = Vec3(Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
@@ -36,6 +42,9 @@ class Vec3(var x: Double, var y: Double, var z: Double) {
             } else {
                 -random
             }
+        }
+        fun reflect(v: Vec3, n: Vec3): Vec3 {
+            return v - n * (2 * (v dot n))
         }
     }
 

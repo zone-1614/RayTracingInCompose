@@ -23,10 +23,18 @@ class MainViewModel : ViewModel() {
     // Camera
     val camera = Camera()
 
+    // material
+    val materialGround = Lambertian(Color3(0.8, 0.8, 0.0))
+    val materialCenter = Lambertian(Color3(0.7, 0.3, 0.3))
+    val materialLeft = Metal(Color3(0.8, 0.8, 0.8))
+    val materialRight = Metal(Color3(0.8, 0.6, 0.2))
+
     // world
     var world = HittableList().apply {
-        add(Sphere(Point3(0.0, 0.0, -1.0), 0.5))
-        add(Sphere(Point3(0.0, -100.5, -1.0), 100.0))
+        add(Sphere(Point3( 0.0, -100.5, -1.0), 100.0, materialGround))
+        add(Sphere(Point3( 0.0,    0.0, -1.0),   0.5, materialCenter))
+        add(Sphere(Point3(-1.0,    0.0, -1.0),   0.5, materialLeft))
+        add(Sphere(Point3( 1.0,    0.0, -1.0),   0.5, materialRight))
     }
 
     var progress by mutableStateOf(imageHeight)
@@ -67,10 +75,14 @@ class MainViewModel : ViewModel() {
     fun rayColor(ray: Ray, world: HittableList, depth: Int): Color3 {
         if (depth <= 0) return Color3()
         val pair = world.hit(ray, 0.001, infinity)
+        val hit = pair.first
         val rec = pair.second
-        if (pair.first) {
-            val target = rec.p + Vec3.randomInHemisphere(rec.normal)
-            return rayColor(Ray(rec.p, target - rec.p), world, depth - 1) * 0.5
+        if (hit) {
+            val (scatter, scattered, attenuation) = rec.material.scatter(ray, rec, Color3(), Ray())
+            if (scatter) {
+                return attenuation * rayColor(scattered, world, depth - 1)
+            }
+            return Color3()
         }
         val dir = ray.direction.normalize()
         val t = 0.5 * (dir.y + 1)

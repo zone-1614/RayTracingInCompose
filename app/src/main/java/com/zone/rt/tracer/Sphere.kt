@@ -2,8 +2,7 @@ package com.zone.rt.tracer
 
 import kotlin.math.sqrt
 
-class Sphere(val center: Point3, val radius: Double) : Hittable {
-    constructor() : this(Point3(0.0, 0.0, 0.0), 0.0)
+class Sphere(val center: Point3, val radius: Double, val material: Material) : Hittable {
 
     override fun hit(ray: Ray, tMin: Double, tMax: Double): Pair<Boolean, HitRecord> {
         val record = HitRecord()
@@ -29,6 +28,7 @@ class Sphere(val center: Point3, val radius: Double) : Hittable {
             p = ray.at(t)
             val outwardNormal = (p - center) / radius
             setFaceNormal(ray, outwardNormal)
+            material = this@Sphere.material
         }
 
 
