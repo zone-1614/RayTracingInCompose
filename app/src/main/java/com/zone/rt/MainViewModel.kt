@@ -60,11 +60,13 @@ class MainViewModel : ViewModel() {
 
     fun refresh() {
         bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
+        progress = imageHeight
+        _progress.set(progress)
     }
 
     fun rayColor(ray: Ray, world: HittableList, depth: Int): Color3 {
         if (depth <= 0) return Color3()
-        val pair = world.hit(ray, 0.0, infinity)
+        val pair = world.hit(ray, 0.001, infinity)
         val rec = pair.second
         if (pair.first) {
             val target = rec.p + rec.normal + Vec3.randomInUnitSphere()
