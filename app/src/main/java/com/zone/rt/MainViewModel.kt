@@ -60,7 +60,6 @@ class MainViewModel : ViewModel() {
                 }
                 progress = _progress.decrementAndGet()
             }
-
             threadPool.add(t)
         }
         threadPool.forEach { it.join() }
