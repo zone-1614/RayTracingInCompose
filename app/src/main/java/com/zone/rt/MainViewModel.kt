@@ -69,7 +69,7 @@ class MainViewModel : ViewModel() {
         val pair = world.hit(ray, 0.001, infinity)
         val rec = pair.second
         if (pair.first) {
-            val target = rec.p + rec.normal + Vec3.randomInUnitSphere()
+            val target = rec.p + Vec3.randomInHemisphere(rec.normal)
             return rayColor(Ray(rec.p, target - rec.p), world, depth - 1) * 0.5
         }
         val dir = ray.direction.normalize()

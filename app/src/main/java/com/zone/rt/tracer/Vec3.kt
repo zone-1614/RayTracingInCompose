@@ -26,6 +26,17 @@ class Vec3(var x: Double, var y: Double, var z: Double) {
                 return p
             }
         }
+        fun randomUnitVector(): Vec3 {
+            return randomInUnitSphere().normalize()
+        }
+        fun randomInHemisphere(normal: Vec3): Vec3 {
+            val random = randomInUnitSphere()
+            return if (normal dot random > 0.0) {
+                random
+            } else {
+                -random
+            }
+        }
     }
 
     operator fun unaryMinus() = Vec3(-x, -y, -z)
