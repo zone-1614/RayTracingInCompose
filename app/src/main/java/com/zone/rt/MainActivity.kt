@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zone.rt.ui.theme.RayTracingInComposeTheme
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.concurrent.thread
 import kotlin.random.Random
 import kotlin.random.nextUInt
 import kotlin.system.measureTimeMillis
