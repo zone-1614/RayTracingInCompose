@@ -1,6 +1,7 @@
 package com.zone.rt.tracer
 
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 class Vec3(var x: Double, var y: Double, var z: Double) {
     constructor() : this(0.0, 0.0, 0.0)
@@ -8,6 +9,24 @@ class Vec3(var x: Double, var y: Double, var z: Double) {
     fun length(): Double = sqrt(lengthSquared())
 
     fun lengthSquared(): Double = x * x + y * y + z * z
+
+    companion object {
+        fun random(): Vec3 = Vec3(Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
+        fun random(min: Double, max: Double): Vec3 {
+            return Vec3(
+                Random.nextDouble(min, max),
+                Random.nextDouble(min, max),
+                Random.nextDouble(min, max)
+            )
+        }
+        fun randomInUnitSphere(): Vec3 {
+            while (true) {
+                val p = random(-1.0, 1.0)
+                if (p.lengthSquared() >= 1) continue
+                return p
+            }
+        }
+    }
 
     operator fun unaryMinus() = Vec3(-x, -y, -z)
 

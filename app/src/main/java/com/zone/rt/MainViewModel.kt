@@ -20,7 +20,8 @@ class MainViewModel : ViewModel() {
     val aspectRatio = 16.0f / 9.0f
     val imageHeight = 256
     val imageWidth = (aspectRatio * imageHeight).toInt()
-    val samples = 100
+    val samples = 10
+    val maxDepth = 30
 
     // Camera
     val camera = Camera()
@@ -46,7 +47,7 @@ class MainViewModel : ViewModel() {
                     val u = (x.toDouble() + Random.nextDouble(1.0)) / (imageWidth - 1)
                     val v = 1 - ((y.toDouble() + Random.nextDouble(1.0)) / (imageHeight - 1))
                     val ray = camera.getRay(v, u)
-                    color.plusAssign(rayColor(ray, world))
+                    color.plusAssign(rayColor(ray, world, maxDepth))
                 }
                 bitmap[x, y] = MakeColor(color, samples)
             }
@@ -57,10 +58,13 @@ class MainViewModel : ViewModel() {
         bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
     }
 
-    fun rayColor(ray: Ray, world: HittableList): Color3 {
+    fun rayColor(ray: Ray, world: HittableList, depth: Int): Color3 {
+        if (depth <= 0) return Color3()
         val pair = world.hit(ray, 0.0, infinity)
+        val rec = pair.second
         if (pair.first) {
-            return (pair.second.normal + Color3(1.0, 1.0, 1.0)) * 0.5
+            val target = rec.p + rec.normal + Vec3.randomInUnitSphere()
+            return rayColor(Ray(rec.p, target - rec.p), world, depth - 1) * 0.5
         }
         val dir = ray.direction.normalize()
         val t = 0.5 * (dir.y + 1)
