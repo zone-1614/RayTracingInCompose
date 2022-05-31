@@ -26,8 +26,8 @@ class MainViewModel : ViewModel() {
     // material
     val materialGround = Lambertian(Color3(0.8, 0.8, 0.0))
     val materialCenter = Lambertian(Color3(0.7, 0.3, 0.3))
-    val materialLeft = Metal(Color3(0.8, 0.8, 0.8))
-    val materialRight = Metal(Color3(0.8, 0.6, 0.2))
+    val materialLeft = Metal(Color3(0.8, 0.8, 0.8), 0.3)
+    val materialRight = Metal(Color3(0.8, 0.6, 0.2), 1.0)
 
     // world
     var world = HittableList().apply {

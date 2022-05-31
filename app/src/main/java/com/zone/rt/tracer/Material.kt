@@ -21,7 +21,8 @@ class Lambertian(val albedo: Color3) : Material() {
     }
 }
 
-class Metal(val albedo: Color3) : Material() {
+class Metal(val albedo: Color3, f: Double) : Material() {
+    var fuzz: Double = if (f < 1) { f } else { 1.0 }
     override fun scatter(
         rayIn: Ray,
         rec: HitRecord,
@@ -29,7 +30,7 @@ class Metal(val albedo: Color3) : Material() {
         scattered: Ray
     ): ScatterResult {
         val reflected = Vec3.reflect(rayIn.direction.normalize(), rec.normal)
-        val _scattered = Ray(rec.p, reflected)
+        val _scattered = Ray(rec.p, reflected + Vec3.randomInUnitSphere() * fuzz)
         return ScatterResult(
             (_scattered.direction dot rec.normal) > 0,
             _scattered,
