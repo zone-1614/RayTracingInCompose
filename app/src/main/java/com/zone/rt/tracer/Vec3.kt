@@ -1,6 +1,7 @@
 package com.zone.rt.tracer
 
 import kotlin.math.abs
+import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -43,8 +44,28 @@ class Vec3(var x: Double, var y: Double, var z: Double) {
                 -random
             }
         }
+
+        /**
+         * @param v incident light direction
+         * @param n normal vector
+         * both params are unit vector
+         */
         fun reflect(v: Vec3, n: Vec3): Vec3 {
             return v - n * (2 * (v dot n))
+        }
+
+        /**
+         * @param v incident light direction
+         * @param n normal vector
+         * @param etaiOverEtat eta i over eta t, eta i and eta t is the refractive indices
+         * v and n are unit vector
+         */
+        fun refract(v: Vec3, n: Vec3, etaiOverEtat: Double): Vec3 {
+            val cos_theta = min(n dot -v, 1.0)
+            // R' is the refracted light, decompose to R'_Perpendicular and R'_Parallel
+            val rper = etaiOverEtat * (v + cos_theta * n)
+            val rpar = -sqrt(abs(1 - rper.lengthSquared())) * n // abs to avoid etaiOverEtat > 1
+            return rper + rpar
         }
     }
 
@@ -94,6 +115,8 @@ class Vec3(var x: Double, var y: Double, var z: Double) {
         z /= rhs.z
     }
 }
+
+operator fun Double.times(rhs: Vec3) = Vec3(this * rhs.x, this * rhs.y, this * rhs.z)
 
 typealias Color3 = Vec3
 typealias Point3 = Vec3
