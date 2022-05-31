@@ -34,6 +34,7 @@ class MainViewModel : ViewModel() {
         add(Sphere(Point3( 0.0, -100.5, -1.0), 100.0, materialGround))
         add(Sphere(Point3( 0.0,    0.0, -1.0),   0.5, materialCenter))
         add(Sphere(Point3(-1.0,    0.0, -1.0),   0.5, materialLeft))
+        add(Sphere(Point3(-1.0,    0.0, -1.0),  -0.4, materialLeft))
         add(Sphere(Point3( 1.0,    0.0, -1.0),   0.5, materialRight))
     }
 
