@@ -1,21 +1,33 @@
 package com.zone.rt.tracer
 
-class Camera {
+import kotlin.math.tan
+
+class Camera(
+    lookFrom: Point3,
+    lookAt: Point3,
+    vup: Vec3,
+    vfov: Double,
+    aspectRatio: Double
+) {
     var origin: Point3
     var horizontal: Vec3
     var vertical: Vec3
     var lowerLeftCorner: Point3
 
     init {
-        val aspectRatio = 16.0 / 9.0
-        val viewportHeight = 2.0
+        val theta = degreesToRadians(vfov)
+        val h = tan(theta / 2)
+        val viewportHeight = 2.0 * h
         val viewportWidth = viewportHeight * aspectRatio
-        val focalLength = 1.0
 
-        origin = Point3()
-        horizontal = Vec3(0.0, viewportHeight, 0.0)
-        vertical = Vec3(viewportWidth, 0.0, 0.0)
-        lowerLeftCorner = origin - horizontal / 2.0 - vertical / 2.0 - Vec3(0.0, 0.0, focalLength)
+        val w = (lookFrom - lookAt).normalize()
+        val u = (vup cross w).normalize()
+        val v = w cross u
+
+        origin = lookFrom
+        horizontal = viewportWidth * u
+        vertical = viewportHeight * v
+        lowerLeftCorner = origin - horizontal / 2.0 - vertical / 2.0 - w
     }
 
     fun getRay(u: Double, v: Double): Ray = Ray(origin, lowerLeftCorner + horizontal * u + vertical * v - origin)

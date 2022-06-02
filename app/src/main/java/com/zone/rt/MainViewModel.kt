@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import com.zone.rt.tracer.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
+import kotlin.math.cos
 import kotlin.random.Random
 
 class MainViewModel : ViewModel() {
@@ -21,7 +22,7 @@ class MainViewModel : ViewModel() {
     val maxDepth = 30
 
     // Camera
-    val camera = Camera()
+    val camera = Camera(Point3(-2.0, 2.0, 1.0), Point3(0.0, 0.0, -1.0), Vec3(0.0, 1.0, 0.0), 90.0, aspectRatio.toDouble())
 
     // material
     val materialGround = Lambertian(Color3(0.8, 0.8, 0.0))
@@ -54,7 +55,7 @@ class MainViewModel : ViewModel() {
                     repeat(samples) {
                         val u = (x.toDouble() + Random.nextDouble(1.0)) / (imageWidth - 1)
                         val v = 1 - ((y.toDouble() + Random.nextDouble(1.0)) / (imageHeight - 1))
-                        val ray = camera.getRay(v, u)
+                        val ray = camera.getRay(u, v)
                         color.plusAssign(rayColor(ray, world, maxDepth))
                     }
                     bitmap[x, y] = makeColor(color, samples)
