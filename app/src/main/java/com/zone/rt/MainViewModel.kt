@@ -22,7 +22,7 @@ class MainViewModel : ViewModel() {
     val maxDepth = 30
 
     // Camera
-    val camera = Camera(Point3(-2.0, 2.0, 1.0), Point3(0.0, 0.0, -1.0), Vec3(0.0, 1.0, 0.0), 90.0, aspectRatio.toDouble())
+    val camera = Camera(Point3(-2.0, 2.0, 1.0), Point3(0.0, 0.0, -1.0), Vec3(0.0, 1.0, 0.0), 20.0, aspectRatio.toDouble())
 
     // material
     val materialGround = Lambertian(Color3(0.8, 0.8, 0.0))
