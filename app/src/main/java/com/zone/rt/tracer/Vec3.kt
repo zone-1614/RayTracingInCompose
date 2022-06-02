@@ -44,6 +44,13 @@ class Vec3(var x: Double, var y: Double, var z: Double) {
                 -random
             }
         }
+        fun randomInUnitDisk(): Vec3 {
+            while (true) {
+                val p = Vec3(Random.nextDouble(-1.0, 1.0), Random.nextDouble(-1.0, 1.0), 0.0)
+                if (p.lengthSquared() >= 1) continue
+                return p
+            }
+        }
 
         /**
          * @param v incident light direction
