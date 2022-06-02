@@ -15,34 +15,22 @@ import kotlin.random.Random
 
 class MainViewModel : ViewModel() {
     // Image
-    val aspectRatio = 16.0f / 9.0f
-    val imageHeight = 256
-    val imageWidth = (aspectRatio * imageHeight).toInt()
+    val aspectRatio = 3.0f / 2.0f
+    val imageWidth = 500
+    val imageHeight = (imageWidth / aspectRatio).toInt()
     val samples = 50
     val maxDepth = 30
 
     // Camera
-    val lookFrom = Point3(3.0, 3.0, 2.0)
-    val lookAt = Point3(0.0, 0.0, -1.0)
+    val lookFrom = Point3(13.0, 2.0, 3.0)
+    val lookAt = Point3(0.0, 0.0, 0.0)
     val vup = Vec3(0.0, 1.0, 0.0)
-    val distToFocus = (lookFrom - lookAt).length()
-    val aperture = 2.0
+    val distToFocus = 10.0
+    val aperture = 0.1
     val camera = Camera(lookFrom, lookAt, vup, 20.0, aspectRatio.toDouble(), aperture, distToFocus)
 
-    // material
-    val materialGround = Lambertian(Color3(0.8, 0.8, 0.0))
-    val materialCenter = Lambertian(Color3(0.7, 0.3, 0.3))
-    val materialLeft = Dielectric(1.5)
-    val materialRight = Metal(Color3(0.8, 0.6, 0.2), 1.0)
-
     // world
-    var world = HittableList().apply {
-        add(Sphere(Point3( 0.0, -100.5, -1.0), 100.0, materialGround))
-        add(Sphere(Point3( 0.0,    0.0, -1.0),   0.5, materialCenter))
-        add(Sphere(Point3(-1.0,    0.0, -1.0),   0.5, materialLeft))
-        add(Sphere(Point3(-1.0,    0.0, -1.0),  -0.4, materialLeft))
-        add(Sphere(Point3( 1.0,    0.0, -1.0),   0.5, materialRight))
-    }
+    var world = finalScene()
 
     var progress by mutableStateOf(imageHeight)
     private var _progress by mutableStateOf(AtomicInteger(imageHeight))
@@ -93,5 +81,39 @@ class MainViewModel : ViewModel() {
         val dir = ray.direction.normalize()
         val t = 0.5 * (dir.y + 1)
         return Color3(1.0, 1.0, 1.0) * (1.0 - t) + Color3(0.5, 0.7, 1.0) * t
+    }
+
+    private fun finalScene(): HittableList {
+        val hittableList = HittableList()
+        val groundMaterial = Lambertian(Color3(0.5, 0.5, 0.5))
+        hittableList.add(Sphere(Point3(0.0, -1000.0, 0.0), 1000.0, groundMaterial))
+        for (a in -3..3) {
+            for (b in -3..3) {
+                val chooseMat = Random.nextDouble(0.0, 1.0)
+                val center = Point3(a + 0.9 * Random.nextDouble(0.0, 1.0), 0.2, b + 0.9 * Random.nextDouble(0.0, 1.0))
+                if ((center - Point3(4.0, 0.2, 0.0)).length() > 0.9) {
+                    if (chooseMat < 0.8) {
+                        val albedo = Color3.random() * Color3.random()
+                        val diffuse = Lambertian(albedo)
+                        hittableList.add(Sphere(center, 0.2, diffuse))
+                    } else if (chooseMat < 0.95) {
+                        val albedo = Color3.random(0.5, 1.0)
+                        val fuzz = Random.nextDouble(0.0, 0.5)
+                        val metal = Metal(albedo, fuzz)
+                        hittableList.add(Sphere(center, 0.2, metal))
+                    } else {
+                        val glass = Dielectric(1.5)
+                        hittableList.add(Sphere(center, 0.2, glass))
+                    }
+                }
+            }
+        }
+        val material1 = Dielectric(1.5)
+        val material2 = Lambertian(Color3(0.4, 0.2, 0.1))
+        val material3 = Metal(Color3(0.7, 0.6, 0.5), 0.0)
+        hittableList.add(Sphere(Point3(0.0, 1.0, 0.0), 1.0, material1))
+        hittableList.add(Sphere(Point3(-4.0, 1.0, 0.0), 1.0, material2))
+        hittableList.add(Sphere(Point3(4.0, 1.0, 0.0), 1.0, material3))
+        return hittableList
     }
 }

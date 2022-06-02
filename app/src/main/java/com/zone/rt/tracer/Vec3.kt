@@ -18,7 +18,7 @@ class Vec3(var x: Double, var y: Double, var z: Double) {
     }
 
     companion object {
-        fun random(): Vec3 = Vec3(Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
+        fun random(): Vec3 = Vec3(Random.nextDouble(0.0, 1.0), Random.nextDouble(0.0, 1.0), Random.nextDouble(0.0, 1.0))
         fun random(min: Double, max: Double): Vec3 {
             return Vec3(
                 Random.nextDouble(min, max),
