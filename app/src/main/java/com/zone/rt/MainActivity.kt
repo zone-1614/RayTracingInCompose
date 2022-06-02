@@ -1,10 +1,7 @@
 package com.zone.rt
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -12,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,16 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zone.rt.ui.theme.RayTracingInComposeTheme
-import java.io.File
-import java.io.FileOutputStream
-import kotlin.concurrent.thread
-import kotlin.random.Random
-import kotlin.random.nextUInt
-import kotlin.system.measureTimeMillis
+import java.time.Instant
+import java.util.*
+import kotlin.concurrent.fixedRateTimer
+import kotlin.concurrent.timerTask
 
 class MainActivity : ComponentActivity() {
 
@@ -65,7 +57,6 @@ fun RayTracingCompose(
             .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var enable by remember { mutableStateOf(true) }
         Image(
             bitmap = vm.bitmap.asImageBitmap(),
             contentDescription = "image",
@@ -73,14 +64,14 @@ fun RayTracingCompose(
         )
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
-            enable = false
+            vm.enable = false
             if (vm.finishRender()) {
+                vm.time = 0
                 vm.refresh()
             }
             vm.draw()
-            enable = true
         },
-            enabled = enable
+            enabled = vm.enable
         ) {
             if (vm.finishRender()) {
                 Text(text = "Restart", color = Color.Black)
@@ -100,5 +91,6 @@ fun RayTracingCompose(
         } else {
             Text(text = "Remain: ${vm.progress} lines", color = Color.Black)
         }
+        Text(text = "Time: ${vm.time} s", color = Color.Black)
     }
 }
